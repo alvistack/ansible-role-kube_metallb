@@ -25,6 +25,22 @@ metadata:
 
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb
+  name: config
+  labels:
+    app.kubernetes.io/name: metallb
+    app.kubernetes.io/part-of: metallb
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  config: |
+{% if metallb_config %}
+    {{ metallb_config | to_nice_yaml(indent=2) | indent(4) }}
+{%- endif %}
+
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: metallb
@@ -106,14 +122,14 @@ metadata:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
     addonmanager.kubernetes.io/mode: EnsureExists
-roleRef:
-  kind: ClusterRole
-  name: metallb-controller
-  apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: ServiceAccount
     name: controller
     namespace: metallb
+roleRef:
+  kind: ClusterRole
+  name: metallb-controller
+  apiGroup: rbac.authorization.k8s.io
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -124,14 +140,14 @@ metadata:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
     addonmanager.kubernetes.io/mode: EnsureExists
-roleRef:
-  kind: ClusterRole
-  name: metallb-speaker
-  apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: ServiceAccount
     name: speaker
     namespace: metallb
+roleRef:
+  kind: ClusterRole
+  name: metallb-speaker
+  apiGroup: rbac.authorization.k8s.io
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -143,10 +159,6 @@ metadata:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
     addonmanager.kubernetes.io/mode: EnsureExists
-roleRef:
-  kind: Role
-  name: config-watcher
-  apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: ServiceAccount
     name: controller
@@ -154,6 +166,10 @@ subjects:
   - kind: ServiceAccount
     name: speaker
     namespace: metallb
+roleRef:
+  kind: Role
+  name: config-watcher
+  apiGroup: rbac.authorization.k8s.io
 
 ---
 apiVersion: apps/v1
@@ -270,19 +286,3 @@ spec:
               drop:
                 - all
             readOnlyRootFilesystem: true
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: metallb
-  name: config
-  labels:
-    app.kubernetes.io/name: metallb
-    app.kubernetes.io/part-of: metallb
-    addonmanager.kubernetes.io/mode: Reconcile
-data:
-  config: |
-{% if metallb_config %}
-    {{ metallb_config | to_nice_yaml(indent=2) | indent(4) }}
-{%- endif %}
