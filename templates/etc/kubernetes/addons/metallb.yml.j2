@@ -25,6 +25,22 @@ metadata:
 
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb
+  name: config
+  labels:
+    app.kubernetes.io/name: metallb
+    app.kubernetes.io/part-of: metallb
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  config: |
+{% if metallb_config %}
+    {{ metallb_config | to_nice_yaml(indent=2) | indent(4) }}
+{%- endif %}
+
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: metallb
@@ -270,19 +286,3 @@ spec:
               drop:
                 - all
             readOnlyRootFilesystem: true
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: metallb
-  name: config
-  labels:
-    app.kubernetes.io/name: metallb
-    app.kubernetes.io/part-of: metallb
-    addonmanager.kubernetes.io/mode: Reconcile
-data:
-  config: |
-{% if metallb_config %}
-    {{ metallb_config | to_nice_yaml(indent=2) | indent(4) }}
-{%- endif %}
