@@ -203,6 +203,7 @@ spec:
       serviceAccountName: speaker
       terminationGracePeriodSeconds: 0
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: speaker
           image: {{ metallb_image_repository }}/metallb/speaker:{{ metallb_version }}
