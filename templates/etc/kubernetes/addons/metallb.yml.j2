@@ -24,11 +24,43 @@ metadata:
     addonmanager.kubernetes.io/mode: Reconcile
 
 ---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: speaker
+  namespace: metallb
+  labels:
+    app.kubernetes.io/name: metallb
+    app.kubernetes.io/part-of: metallb
+    addonmanager.kubernetes.io/mode: Reconcile
+spec:
+  allowPrivilegeEscalation: false
+  allowedCapabilities:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
+  fsGroup:
+    rule: RunAsAny
+  hostNetwork: true
+  hostPorts:
+    - max: 7472
+      min: 7472
+  privileged: true
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+    - '*'
+
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: metallb
   name: config
+  namespace: metallb
   labels:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
@@ -43,8 +75,8 @@ data:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: metallb
   name: controller
+  namespace: metallb
   labels:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
@@ -54,8 +86,8 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: metallb
   name: speaker
+  namespace: metallb
   labels:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
@@ -94,13 +126,17 @@ rules:
   - apiGroups: [""]
     resources: ["services", "endpoints", "nodes"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resourceNames: ["speaker"]
+    resources: ["podsecuritypolicies"]
+    verbs: ["use"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: metallb
   name: config-watcher
+  namespace: metallb
   labels:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/part-of: metallb
@@ -175,8 +211,8 @@ roleRef:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  namespace: metallb
   name: speaker
+  namespace: metallb
   labels:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/component: speaker
@@ -204,10 +240,14 @@ spec:
       terminationGracePeriodSeconds: 0
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       containers:
         - name: speaker
           image: {{ metallb_image_repository }}/metallb/speaker:{{ metallb_version }}
-          imagePullPolicy: IfNotPresent
           args:
             - --port=7472
             - --config=config
@@ -216,6 +256,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: METALLB_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           ports:
             - name: monitoring
               containerPort: 7472
@@ -228,16 +272,18 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop:
-                - all
+                - ALL
               add:
-                - net_raw
+                - NET_ADMIN
+                - NET_RAW
+                - SYS_ADMIN
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metallb
   name: controller
+  namespace: metallb
   labels:
     app.kubernetes.io/name: metallb
     app.kubernetes.io/component: controller
@@ -266,11 +312,12 @@ spec:
       terminationGracePeriodSeconds: 0
       securityContext:
         runAsNonRoot: true
-        runAsUser: 65534 # nobody
+        runAsUser: 65534
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       containers:
         - name: controller
           image: {{ metallb_image_repository }}/metallb/controller:{{ metallb_version }}
-          imagePullPolicy: IfNotPresent
           args:
             - --port=7472
             - --config=config
@@ -283,7 +330,7 @@ spec:
               memory: 100Mi
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
-                - all
-            readOnlyRootFilesystem: true
+                - ALL
