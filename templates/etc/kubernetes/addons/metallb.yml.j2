@@ -24,7 +24,7 @@ metadata:
     addonmanager.kubernetes.io/mode: Reconcile
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: speaker
@@ -126,6 +126,9 @@ rules:
   - apiGroups: [""]
     resources: ["services", "endpoints", "nodes"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
   - apiGroups: ["extensions"]
     resourceNames: ["speaker"]
     resources: ["podsecuritypolicies"]
@@ -145,9 +148,6 @@ rules:
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["create"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
