@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # MetalLB version.
-metallb_version: "v0.8.1"
+metallb_version: "v0.8.2"
 
 # ImageRepository sets the container registry to pull images from.
 metallb_image_repository: "docker.io"
