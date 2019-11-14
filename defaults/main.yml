@@ -18,7 +18,7 @@
 metallb_version: "v0.8.3"
 
 # ImageRepository sets the container registry to pull images from.
-metallb_image_repository: "docker.io"
+metallb_image_repository: "docker.io/metallb"
 
 # ConfigMap for MetalLB configuration.
 metallb_config:

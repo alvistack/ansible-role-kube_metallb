@@ -247,7 +247,7 @@ spec:
           key: node-role.kubernetes.io/master
       containers:
         - name: speaker
-          image: {{ metallb_image_repository }}/metallb/speaker:{{ metallb_version }}
+          image: {{ metallb_image_repository }}/speaker:{{ metallb_version }}
           args:
             - --port=7472
             - --config=config
@@ -317,7 +317,7 @@ spec:
         beta.kubernetes.io/os: linux
       containers:
         - name: controller
-          image: {{ metallb_image_repository }}/metallb/controller:{{ metallb_version }}
+          image: {{ metallb_image_repository }}/controller:{{ metallb_version }}
           args:
             - --port=7472
             - --config=config
