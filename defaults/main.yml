@@ -15,10 +15,14 @@
 # limitations under the License.
 
 # MetalLB version.
-metallb_version: "v0.8.3"
+metallb_version: "v0.9.3"
 
 # ImageRepository sets the container registry to pull images from.
 metallb_image_repository: "docker.io/metallb"
+
+# The memberlist secret contains the secretkey to encrypt the communication
+# between speakers for the fast dead node detection.
+metallb_secretkey: "{{ hostvars[ansible_play_hosts[0]].ansible_machine_id | to_uuid }}"
 
 # ConfigMap for MetalLB configuration.
 metallb_config:
