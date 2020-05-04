@@ -35,9 +35,9 @@ metadata:
     addonmanager.kubernetes.io/mode: Reconcile
 data:
   config: |
-{% if metallb_config %}
+{% if metallb_config -%}
     {{ metallb_config | to_nice_yaml(indent=2) | indent(4) }}
-{% endif -%}
+{%- endif %}
 
 ---
 apiVersion: v1
