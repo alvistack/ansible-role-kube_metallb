@@ -1,6 +1,6 @@
 # Ansible Role for MetalLB on Kubernetes
 
-[![Travis](https://img.shields.io/travis/com/alvistack/ansible-role-kubernetes_metallb.svg)](https://travis-ci.com/alvistack/ansible-role-kubernetes_metallb)
+[![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/alvistack/ansible-role-kubernetes_metallb/master)](https://gitlab.com/alvistack/ansible-role-kubernetes_metallb/-/pipelines)
 [![GitHub release](https://img.shields.io/github/release/alvistack/ansible-role-kubernetes_metallb.svg)](https://github.com/alvistack/ansible-role-kubernetes_metallb/releases)
 [![GitHub license](https://img.shields.io/github/license/alvistack/ansible-role-kubernetes_metallb.svg)](https://github.com/alvistack/ansible-role-kubernetes_metallb/blob/master/LICENSE)
 [![Ansible Role](https://img.shields.io/badge/galaxy-alvistack.kubernetes_metallb-blue.svg)](https://galaxy.ansible.com/alvistack/kubernetes_metallb)
