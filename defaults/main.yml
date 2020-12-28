@@ -22,7 +22,7 @@ metallb_image_repository: "docker.io/metallb"
 
 # The memberlist secret contains the secretkey to encrypt the communication
 # between speakers for the fast dead node detection.
-metallb_secretkey: "{{ hostvars[ansible_play_hosts[0]].ansible_machine_id | to_uuid }}"
+metallb_secretkey: "{{ hostvars[groups['kube_master'][0]].ansible_machine_id | to_uuid }}"
 
 # ConfigMap for MetalLB configuration.
 metallb_config:
