@@ -352,6 +352,7 @@ spec:
       containers:
         - name: speaker
           image: {{ metallb_image_repository }}/speaker:{{ metallb_version }}
+          imagePullPolicy: IfNotPresent
           args:
             - --port=7472
             - --config=config
@@ -434,6 +435,7 @@ spec:
       containers:
         - name: controller
           image: {{ metallb_image_repository }}/controller:{{ metallb_version }}
+          imagePullPolicy: IfNotPresent
           args:
             - --port=7472
             - --config=config
