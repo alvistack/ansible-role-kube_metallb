@@ -345,7 +345,7 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
@@ -431,7 +431,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       containers:
         - name: controller
           image: {{ metallb_image_repository }}/controller:{{ metallb_version }}
