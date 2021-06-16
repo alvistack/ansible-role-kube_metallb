@@ -109,9 +109,7 @@ metadata:
 spec:
   allowPrivilegeEscalation: false
   allowedCapabilities:
-    - NET_ADMIN
     - NET_RAW
-    - SYS_ADMIN
   allowedHostPaths: []
   defaultAddCapabilities: []
   defaultAllowPrivilegeEscalation: false
@@ -123,6 +121,8 @@ spec:
   hostPorts:
     - max: 7472
       min: 7472
+    - max: 7946
+      min: 7946
   privileged: true
   readOnlyRootFilesystem: true
   requiredDropCapabilities:
@@ -172,7 +172,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["services"]
-    verbs: ["get", "list", "watch", "update"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["services/status"]
     verbs: ["update"]
@@ -196,6 +196,9 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["services", "endpoints", "nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["events"]
@@ -237,6 +240,29 @@ rules:
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: controller
+  namespace: metallb
+  labels:
+    app.kubernetes.io/name: metallb
+    app.kubernetes.io/part-of: metallb
+    addonmanager.kubernetes.io/mode: Reconcile
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["memberlist"]
+    verbs: ["list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["controller"]
+    verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: metallb:controller
@@ -310,6 +336,25 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: speaker
+    namespace: metallb
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: controller
+  namespace: metallb
+  labels:
+    app.kubernetes.io/name: metallb
+    app.kubernetes.io/part-of: metallb
+    addonmanager.kubernetes.io/mode: EnsureExists
+roleRef:
+  kind: Role
+  name: controller
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: controller
     namespace: metallb
 
 ---
@@ -347,9 +392,10 @@ spec:
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
+          operator: Exists
       containers:
         - name: speaker
-          image: {{ metallb_image_repository }}/speaker:{{ metallb_version }}
+          image: quay.io/metallb/speaker:v0.10.2
           imagePullPolicy: IfNotPresent
           args:
             - --port=7472
@@ -369,10 +415,6 @@ spec:
                   fieldPath: status.podIP
             - name: METALLB_ML_LABELS
               value: "app.kubernetes.io/name=speaker,app.kubernetes.io/part-of=metallb"
-            - name: METALLB_ML_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
             - name: METALLB_ML_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -381,18 +423,17 @@ spec:
           ports:
             - name: monitoring
               containerPort: 7472
-          resources:
-            limits:
-              cpu: 100m
-              memory: 100Mi
+            - name: memberlist-tcp
+              containerPort: 7946
+            - name: memberlist-udp
+              containerPort: 7946
+              protocol: UDP
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               add:
-                - NET_ADMIN
                 - NET_RAW
-                - SYS_ADMIN
               drop:
                 - ALL
 
@@ -432,18 +473,19 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: controller
-          image: {{ metallb_image_repository }}/controller:{{ metallb_version }}
+          image: quay.io/metallb/controller:v0.10.2
           imagePullPolicy: IfNotPresent
           args:
             - --port=7472
             - --config=config
+          env:
+            - name: METALLB_ML_SECRET_NAME
+              value: memberlist
+            - name: METALLB_DEPLOYMENT
+              value: controller
           ports:
             - name: monitoring
               containerPort: 7472
-          resources:
-            limits:
-              cpu: 100m
-              memory: 100Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
