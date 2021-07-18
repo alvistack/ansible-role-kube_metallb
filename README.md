@@ -1,9 +1,13 @@
 # Ansible Role for MetalLB on Kubernetes
 
-[![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/alvistack/ansible-role-kubernetes_metallb/master)](https://gitlab.com/alvistack/ansible-role-kubernetes_metallb/-/pipelines)
-[![GitHub release](https://img.shields.io/github/release/alvistack/ansible-role-kubernetes_metallb.svg)](https://github.com/alvistack/ansible-role-kubernetes_metallb/releases)
-[![GitHub license](https://img.shields.io/github/license/alvistack/ansible-role-kubernetes_metallb.svg)](https://github.com/alvistack/ansible-role-kubernetes_metallb/blob/master/LICENSE)
-[![Ansible Role](https://img.shields.io/badge/galaxy-alvistack.kubernetes_metallb-blue.svg)](https://galaxy.ansible.com/alvistack/kubernetes_metallb)
+[![Gitlab pipeline
+status](https://img.shields.io/gitlab/pipeline/alvistack/ansible-role-kubernetes_metallb/master)](https://gitlab.com/alvistack/ansible-role-kubernetes_metallb/-/pipelines)
+[![GitHub
+release](https://img.shields.io/github/release/alvistack/ansible-role-kubernetes_metallb.svg)](https://github.com/alvistack/ansible-role-kubernetes_metallb/releases)
+[![GitHub
+license](https://img.shields.io/github/license/alvistack/ansible-role-kubernetes_metallb.svg)](https://github.com/alvistack/ansible-role-kubernetes_metallb/blob/master/LICENSE)
+[![Ansible
+Role](https://img.shields.io/badge/galaxy-alvistack.kubernetes_metallb-blue.svg)](https://galaxy.ansible.com/alvistack/kubernetes_metallb)
 
 Ansible Role for MetalLB on Kubernetes Installation.
 
@@ -39,7 +43,8 @@ This role could simply deploy to `localhost` as below:
 ## License
 
   - Code released under [Apache License 2.0](LICENSE)
-  - Docs released under [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
+  - Docs released under [CC
+    BY 4.0](http://creativecommons.org/licenses/by/4.0/)
 
 ## Author Information
 
