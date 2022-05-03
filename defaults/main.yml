@@ -25,4 +25,4 @@ kube_metallb_config:
       protocol: layer2
       avoid-buggy-ips: true
       addresses:
-        - "{{ (ansible_default_ipv4.network + '/' + ansible_default_ipv4.netmask) | ipaddr('net') | ipaddr('last_usable') }}/28"
+        - "{{ (ansible_default_ipv4.network + '/' + ansible_default_ipv4.netmask) | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('last_usable') }}/28"
