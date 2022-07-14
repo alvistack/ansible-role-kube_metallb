@@ -1,6 +1,6 @@
 # Ansible Role for MetalLB on Kubernetes
 
-<img src="/alvistack.svg" width="75" alt="AlviStack">
+<a href="https://alvistack.com" title="AlviStack" target="_blank"><img src="/alvistack.svg" height="75" alt="AlviStack"></a>
 
 [![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/alvistack/ansible-role-kube_metallb/master)](https://gitlab.com/alvistack/ansible-role-kube_metallb/-/pipelines)
 [![GitHub tag](https://img.shields.io/github/tag/alvistack/ansible-role-kube_metallb.svg)](https://github.com/alvistack/ansible-role-kube_metallb/tags)
