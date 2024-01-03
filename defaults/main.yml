@@ -1,6 +1,6 @@
 ---
 
-# Copyright 2023 Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
+# Copyright 2024 Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,4 +25,4 @@ kube_metallb_config:
       protocol: layer2
       avoid-buggy-ips: true
       addresses:
-        - "{{ (ansible_default_ipv4.network + '/' + ansible_default_ipv4.netmask) | ansible.netcommon.ipaddr('net') | ansible.netcommon.ipaddr('last_usable') }}/28"
+        - "{{ (ansible_default_ipv4.network + '/' + ansible_default_ipv4.netmask) | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('last_usable') }}/28"
