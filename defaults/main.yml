@@ -16,7 +16,7 @@
 
 # The memberlist secret contains the secretkey to encrypt the communication
 # between speakers for the fast dead node detection.
-kube_metallb_secretkey: "{{ hostvars[groups['kube_master'][0]].ansible_machine_id | to_uuid }}"
+kube_metallb_secretkey: "{{ hostvars[groups['kube_master'][0]].ansible_machine_id }}"
 
 # ConfigMap for MetalLB configuration.
 kube_metallb_config:
